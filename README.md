@@ -52,6 +52,23 @@ If you need to rebuild the virtualenv from scratch:
 
     $ make clean-all
 
+## Dokku Setup
+Initialize a git remote for the application deploy target:
+
+    $ git remote add prod dokku@host:tpp-api
+
+Add a redis container for the app
+
+    $ ssh dokku@host redis:create tpp-api
+
+Set the `FLASK_ENV` variable:
+
+    $ ssh dokku@host config:set tpp-api FLASK_ENV=production
+
+Deploy!
+
+    $ git push prod
+
 ## AWS Setup
 The `/sign_s3` API endpoint generates signed urls for uploading files to the
 app's S3 bucket. Some configuration in the AWS Console is required to get this
@@ -63,7 +80,7 @@ the new bucket that matches the [rules listed here][bucket-rules].
 
 Next, configure the Dokku app to use the bucket you created:
 
-    $ ssh dokku@host config:set AWS_S3_BUCKET=buckename-here
+    $ ssh dokku@host config:set tpp-api AWS_S3_BUCKET=buckename-here
 
 Add a new CORS Configuration under bucket Properties -> Permissions:
 
@@ -103,8 +120,8 @@ Next, open the [Users][iam-users] page and create a new user. Click on "Show
 User Security Credentials" and copy the access key and secret key into the
 Dokku config variables:
 
-    $ ssh dokku@host config:set AWS_ACCESS_KEY=access-key-here
-    $ ssh dokku@host config:set AWS_SECRET_KEY=secret-key-here
+    $ ssh dokku@host config:set tpp-api AWS_ACCESS_KEY=access-key-here
+    $ ssh dokku@host config:set tpp-api AWS_SECRET_KEY=secret-key-here
 
 On the Users page, select the new user and select "Add User to Groups" from the
 "User Actions" menu. Select the group created previously.
@@ -113,7 +130,7 @@ On the Users page, select the new user and select "Add User to Groups" from the
 Set the timout of the signed URLs using the `AWS_URL_EXPIRY` environment
 variable on dokku:
 
-    $ ssh dokku@host config:set AWS_URL_EXPIRY=30
+    $ ssh dokku@host config:set tpp-api AWS_URL_EXPIRY=30
 
 [s3-console]: https://console.aws.amazon.com/s3/home?region=us-west-2
 [bucket-rules]: https://devcenter.heroku.com/articles/s3#naming-buckets
