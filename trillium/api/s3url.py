@@ -18,7 +18,7 @@ s3_args = {
 
 
 @api_bp.route('/sign_s3')
-@limiter.limit('10/second,200/minute')
+@limiter.limit('2/second,10/minute')
 @use_kwargs(s3_args)
 def get_s3_url(path, mimetype):
     dir_, fname = os.path.split(path)

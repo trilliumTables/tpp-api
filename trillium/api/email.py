@@ -18,7 +18,7 @@ email_args = {
 
 
 @api_bp.route('/send_email', methods=['POST'])
-@limiter.limit('10/second,200/minute')
+@limiter.limit('1/second,5/minute')
 @use_args(email_args)
 def send_info_email(args):
 
