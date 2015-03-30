@@ -64,8 +64,11 @@ def configure_logging(app):
 
     _api_log.setLevel(level)
 
-    # _cors_log = logging.getLogger('Flask-Cors')
-    # _cors_log.setLevel(logging.WARNING)
+    _cors_log = logging.getLogger('Flask-Cors')
+    _cors_log.setLevel(logging.WARNING)
+
+    _args_log = logging.getLogger('webargs.flaskparser')
+    _args_log.setLevel(logging.WARNING)
 
     # Api does its own request logging
     _werkzeug_log = logging.getLogger('werkzeug')

@@ -5,7 +5,6 @@ import hmac
 import base64
 import time
 import urllib
-
 from flask import current_app
 
 request_format = (
@@ -14,7 +13,7 @@ request_format = (
     '%s\n'  # image/jpeg
     '%d\n'  # 1234567890
     '%s\n'  # x-amz-acl:public-read
-    '/%s/%s'  # /myparish/image.jpg
+    '/%s/%s'  # /bucketname/file
 )
 
 
@@ -32,6 +31,8 @@ def sign_s3(path, mimetype, method, expiry):
     access_key = current_app.config.get('AWS_ACCESS_KEY')
     secret_key = current_app.config.get('AWS_SECRET_KEY')
     bucket_name = current_app.config.get('AWS_S3_BUCKET')
+
+    path = urllib.quote(path)
 
     expires = long(time.time() + expiry)
     amz_headers = [

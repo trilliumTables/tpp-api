@@ -7,10 +7,10 @@ gunicorn
 
 # Security
 Flask-CORS==1.10.3
-Flask-Limiter==0.7.3
+Flask-Limiter
 
 # Mail
-Flask-Mail==0.9.1
+Flask-Mail
 
 # Celery
 redis

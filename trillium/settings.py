@@ -44,7 +44,8 @@ class Config(object):
     CONTACT_EMAIL_RECIPIENTS = os.getenv('CONTACT_EMAIL_RECIPIENTS')
 
     # Celery backend configuration
-    CELERY_BROKER_URL = 'redis://localhost'
+    REDIS_URL = 'redis://localhost'
+    CELERY_BROKER_URL = REDIS_URL
     CELERY_RESULT_BACKEND = CELERY_BROKER_URL
     CELERY_TASK_SERIALIZER = 'json'
     CELERY_RESULT_SERIALIZER = 'json'
@@ -61,12 +62,13 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
 
     # CORS Settings
-    CORS_HEADERS = (
+    CORS_ALLOW_HEADERS = (
         'Content-Type',
         'Authorization',
         'Origin',
     )
     CORS_ORIGINS = ('*',)
+    CORS_ALWAYS_SEND = True
 
     PROFILE = bool(os.environ.get('PROFILE', False))
 
@@ -103,6 +105,10 @@ class DevConfig(Config):
     # Rate limiter settings
     RATELIMIT_STORAGE_URL = 'redis://localhost'
 
+    CORS_ORIGINS = (
+        'http://localhost:5100',
+    )
+
 
 class ProdConfig(Config):
     """Staging configuration."""
@@ -122,7 +128,7 @@ class ProdConfig(Config):
     SECRET_KEY = os.environ.get('SECRET_KEY', Config.SECRET_KEY)
 
     # Celery backend configuration
-    CELERY_BROKER_URL = os.getenv('REDIS_URL')
+    CELERY_BROKER_URL = os.getenv('REDIS_URL', Config.REDIS_URL)
     CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND',
                                            CELERY_BROKER_URL)
     BROKER_POOL_LIMIT = int(os.environ.get('BROKER_POOL_LIMIT',
@@ -134,5 +140,5 @@ class ProdConfig(Config):
                                              Config.NOTIFICATION_FREQ_IN_SEC))
 
     # Rate limiter settings
-    RATELIMIT_STORAGE_URL = os.getenv('REDIS_URL')
+    RATELIMIT_STORAGE_URL = os.getenv('REDIS_URL', Config.REDIS_URL)
     RATELIMIT_HEADERS_ENABLED = os.getenv('RATELIMIT_HEADERS_ENABLED', False)
