@@ -3,10 +3,6 @@
 # Run beat scheduler `-B` and send events `-E`
 CELERY_ARGS="-B -E"
 
-# Configure queues
-CELERY_QUEUES=${CELERY_QUEUES:-"celery,notifications"}
-CELERY_ARGS="$CELERY_ARGS -Q $CELERY_QUEUES"
-
 # Set log level
 CELERY_LOG_LEVEL=${CELERY_LOG_LEVEL:-"info"}
 CELERY_ARGS="$CELERY_ARGS -l $CELERY_LOG_LEVEL"
