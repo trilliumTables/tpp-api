@@ -16,3 +16,6 @@ Flask-Mail
 redis
 Flask-Celery-Helper
 celery<3.2.0
+
+# Monitoring
+newrelic
