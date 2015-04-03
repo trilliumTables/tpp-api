@@ -44,8 +44,20 @@ class Config(object):
     CONTACT_EMAIL_RECIPIENTS = os.getenv('CONTACT_EMAIL_RECIPIENTS')
 
     # Celery backend configuration
-    REDIS_URL = 'redis://localhost'
-    CELERY_BROKER_URL = REDIS_URL
+    CELERY_CONNECTOR = 'amqp'
+    CELERY_USER = 'guest'
+    CELERY_PASSWORD = 'guest'
+    CELERY_HOST = 'localhost'
+    CELERY_PORT = 5672
+    CELERY_VHOST = '/'
+    CELERY_BROKER_URL = '%s://%s:%s@%s:%i/%s' % (
+        CELERY_CONNECTOR,
+        CELERY_USER,
+        CELERY_PASSWORD,
+        CELERY_HOST,
+        CELERY_PORT,
+        CELERY_VHOST
+    )
     CELERY_RESULT_BACKEND = CELERY_BROKER_URL
     CELERY_TASK_SERIALIZER = 'json'
     CELERY_RESULT_SERIALIZER = 'json'
@@ -58,10 +70,9 @@ class Config(object):
     CELERYD_CONCURRENCY = 1
     BROKER_POOL_LIMIT = 8
 
-    # Database settings
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
-
     # CORS Settings
+    REDIS_URL = 'redis://localhost/tpp-api'
+    RATELIMIT_STORAGE_URL = REDIS_URL
     CORS_ALLOW_HEADERS = (
         'Content-Type',
         'Authorization',
@@ -102,9 +113,6 @@ class DevConfig(Config):
     # Basic app settings
     ENV = 'dev'
 
-    # Rate limiter settings
-    RATELIMIT_STORAGE_URL = 'redis://localhost'
-
     CORS_ORIGINS = (
         'http://localhost:5100',
     )
@@ -128,9 +136,9 @@ class ProdConfig(Config):
     SECRET_KEY = os.environ.get('SECRET_KEY', Config.SECRET_KEY)
 
     # Celery backend configuration
-    CELERY_BROKER_URL = os.getenv('REDIS_URL', Config.REDIS_URL)
-    CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND',
-                                           CELERY_BROKER_URL)
+    REDIS_URL = os.getenv('REDIS_URL', Config.REDIS_URL)
+    CELERY_BROKER_URL = os.getenv('RABBITMQ_BIGWIG_URL', REDIS_URL)
+    CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', None)
     BROKER_POOL_LIMIT = int(os.environ.get('BROKER_POOL_LIMIT',
                                            Config.BROKER_POOL_LIMIT))
     CELERYD_CONCURRENCY = int(os.environ.get('CELERYD_CONCURRENCY', 1))
@@ -140,5 +148,5 @@ class ProdConfig(Config):
                                              Config.NOTIFICATION_FREQ_IN_SEC))
 
     # Rate limiter settings
-    RATELIMIT_STORAGE_URL = os.getenv('REDIS_URL', Config.REDIS_URL)
+    RATELIMIT_STORAGE_URL = REDIS_URL
     RATELIMIT_HEADERS_ENABLED = os.getenv('RATELIMIT_HEADERS_ENABLED', False)

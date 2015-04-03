@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Run beat scheduler `-B` and send events `-E`
-CELERY_ARGS="-B -E"
+if [ "$CELERY_BEAT" ]; then
+    CELERY_ARGS='-B'
+fi
 
 # Set log level
 CELERY_LOG_LEVEL=${CELERY_LOG_LEVEL:-"info"}
